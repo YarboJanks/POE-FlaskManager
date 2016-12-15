@@ -73,10 +73,10 @@ Loop
 
 ;#####################################################################################
 
-Flask1Logic() ; Basalt 5000 Base + 60% (20% quality, 12% alchemist, 20% druidic rite, 8% pathfinder) = 8000 ms
+Flask1Logic() ; Basalt 5000 Base / ToH 4000 Base + 60% (20% quality, 12% alchemist, 20% druidic rite, 8% pathfinder)
 {
 	global Flask1_timer
-	if (A_TickCount - Flask1_timer > 5000*1.6) and GetKeyState("RButton", "P") {
+	if (A_TickCount - Flask1_timer > 4000*1.6) and GetKeyState("RButton", "P") {
 		Sendinput, {1 Down}
 		Sendinput, {1 Up}
 		Flask1_timer := A_TickCount
@@ -144,7 +144,6 @@ BladeFlurryReleaseAt6()
 
 HealLogic()
 {
-	global FlaskHP_timer
 	UseHealFlask4()
 }
 
@@ -153,7 +152,7 @@ HealLogic()
 UseHealFlask4()
 {
 	global FlaskHP_timer
-	if (A_TickCount - FlaskHP_timer > 100) and IsSameColors(Scan, 471, 1052, Stride, 144, 36, 12) { ;divine 4 flask is ready
+	if (A_TickCount - FlaskHP_timer > 250) and IsSameColors(Scan, 471, 1052, Stride, 144, 36, 12) { ;divine 4 flask is ready
         Sendinput, {4 Down}
         Sendinput, {4 Up}
 		FlaskHP_timer := A_TickCount
@@ -227,16 +226,9 @@ return
 	if (A_TickCount - Enter_key_timer > 15000) {
 		IfWinActive, Path of Exile ahk_class POEWindowClass 
 		{
-
+			Sendinput, {RButton Up}
 		}
 	}
-return
-
-;#####################################################################################
-
-F12::
-	Gdip_Shutdown(pToken) ;Closing handles
-	ExitApp
 return
 
 ;#####################################################################################
@@ -245,10 +237,26 @@ return
 F4::
 	BlockInput On
 	SendInput ^{Enter}{Home}{Delete}/invite {Enter}{enter}{up}{up}{escape}
-	SendInput ^{Enter}{Home}{Delete}/tradewith {Enter}{enter}{up}{up}{escape}
-	SendInput ^{Enter}{Home}{Delete}/whois {Enter}{enter}{up}{up}{escape}
 	BlockInput Off
 	return
+
+;====== TRADE ======
+F5::
+	BlockInput On
+	SendInput ^{Enter}{Home}{Delete}/tradewith {Enter}{enter}{up}{up}{escape}
+	BlockInput Off
+	return	
+
+;====== HIDEOUT ======
+~`::
+	SendInput ^{Enter}/hideout{Enter}
+	return
+
+;====== CLOSE SCRIPT ======
+F12::
+	Gdip_Shutdown(pToken) ;Closing handles
+	ExitApp
+return
 
 ;#####################################################################################
 
