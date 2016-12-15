@@ -46,6 +46,20 @@ Loop
 		;MeasureAverageColor3x3(Scan, 1804, 1059, Stride)
 		
 		if IsSameColors(Scan, 1441, 991, Stride, 54, 129, 37) { ;checking ingame state 
+			if !IsSameColors(Scan, 113, 1020, Stride, 83, 12, 18) { ;checking for 30% hp
+				Sendinput, {4 Down}
+				Sendinput, {4 Up}
+				Sendinput, {1 Down}
+				Sendinput, {1 Up}
+				Sendinput, {2 Down}
+				Sendinput, {2 Up}
+				Sendinput, {3 Down}
+				Sendinput, {3 Up}
+				Sendinput, {5 Down}
+				Sendinput, {5 Up}																
+				run, cports.exe /close * * * * PathOfExile_x64.exe
+			}
+
 			Flask1Logic()
 			Flask2Logic()
 			Flask3Logic()
@@ -222,11 +236,22 @@ return
 
 ;#####################################################################################
 
-~Q:: ;Activate few utility flasks
+~Q:: ;Movement skill (WB)
 	if (A_TickCount - Enter_key_timer > 15000) {
 		IfWinActive, Path of Exile ahk_class POEWindowClass 
 		{
-			Sendinput, {RButton Up}
+
+		}
+	}
+return
+
+~LButton::
+	if (A_TickCount - Enter_key_timer > 15000) {
+		IfWinActive, Path of Exile ahk_class POEWindowClass 
+		{
+			if GetKeyState("RButton", "P") { ;BF stack fix
+				Sendinput, {RButton Up}
+			}
 		}
 	}
 return
