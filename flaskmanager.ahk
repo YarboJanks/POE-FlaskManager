@@ -43,9 +43,9 @@ Loop
 		pBitmapHaystack := Gdip_BitmapFromScreen(1) ;Grabing screenshot from main monitor
 		Gdip_LockBits(pBitmapHaystack, 0, 0, 1920, 1080, Stride, Scan, BitmapData)
 
-		;MeasureAverageColor3x3(Scan, 1804, 1059, Stride)
+		;MeasureAverageColor3x3(Scan, 1504, 66, Stride)
 		
-		if IsSameColors(Scan, 1441, 991, Stride, 54, 129, 37) { ;checking ingame state 
+		if IsSameColors(Scan, 1441, 991, Stride, 54, 129, 37) && !IsSameColors(Scan, 20, 394, Stride, 48, 21, 16) && !IsSameColors(Scan, 1504, 66, Stride, 165, 131, 71) { ;checking ingame state (green shop button) and closed chat window (Local chat button enabled and shown on screen) and closed invenory (yellow pixels near "INVENTORY")
 			if !IsSameColors(Scan, 113, 1020, Stride, 83, 12, 18) { ;checking for 30% hp
 				Sendinput, {4 Down}
 				Sendinput, {4 Up}
@@ -218,7 +218,7 @@ IsSameColors(Scan, x, y, Stride, r2, g2, b2) {
 	g0 := g0 / 9
 	b0 := b0 / 9
 
-	return ((r0 - r2)*(r0 - r2) + (b0 - b2)*(b0 - b2) + (g0 - g2)*(g0 - g2) < 5 * 5)
+	return ((r0 - r2)*(r0 - r2) + (b0 - b2)*(b0 - b2) + (g0 - g2)*(g0 - g2) < 49)
 }
 
 ;#####################################################################################
