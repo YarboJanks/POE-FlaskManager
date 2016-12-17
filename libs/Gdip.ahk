@@ -3,6 +3,7 @@
 ; Supports: Basic, _L ANSi, _L Unicode x86 and _L Unicode x64
 ;
 ; Updated 2/20/2014 - fixed Gdip_CreateRegion() and Gdip_GetClipRegion() on AHK Unicode x86
+; Updated 5/13/2013 - fixed Gdip_SetBitmapToClipboard() on AHK Unicode x64
 ;
 ;#####################################################################################
 ;#####################################################################################
@@ -681,7 +682,7 @@ Gdip_LibraryVersion()
 ; notes					This is the sub-version currently maintained by Rseding91
 Gdip_LibrarySubVersion()
 {
-	return 1.46
+	return 1.47
 }
 
 ;#####################################################################################
@@ -1832,13 +1833,12 @@ Gdip_SetBitmapToClipboard(pBitmap)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	off1 := A_PtrSize = 8 ? 52 : 44, off2 := A_PtrSize = 8 ? 32 : 24
-	
 	hBitmap := Gdip_CreateHBITMAPFromBitmap(pBitmap)
-	DllCall("GetObject", Ptr, hBitmap, "int", VarSetCapacity(oi, A_PtrSize = 8 ? 96 : 84, 0), Ptr, &oi)
-	hdib := DllCall("GlobalAlloc", "uint", 2, Ptr, off1+NumGet(oi, off1, "UInt")-4, Ptr)
+	DllCall("GetObject", Ptr, hBitmap, "int", VarSetCapacity(oi, A_PtrSize = 8 ? 104 : 84, 0), Ptr, &oi)
+	hdib := DllCall("GlobalAlloc", "uint", 2, Ptr, 40+NumGet(oi, off1, "UInt"), Ptr)
 	pdib := DllCall("GlobalLock", Ptr, hdib, Ptr)
-	DllCall("RtlMoveMemory", Ptr, pdib, "uint", &oi+off2, Ptr, 40)
-	DllCall("RtlMoveMemory", Ptr, pdib+40, Ptr, NumGet(oi, off2 - (A_PtrSize ? A_PtrSize : 4)), Ptr, NumGet(oi, off1, "UInt"))
+	DllCall("RtlMoveMemory", Ptr, pdib, Ptr, &oi+off2, Ptr, 40)
+	DllCall("RtlMoveMemory", Ptr, pdib+40, Ptr, NumGet(oi, off2 - (A_PtrSize ? A_PtrSize : 4), Ptr), Ptr, NumGet(oi, off1, "UInt"))
 	DllCall("GlobalUnlock", Ptr, hdib)
 	DllCall("DeleteObject", Ptr, hBitmap)
 	DllCall("OpenClipboard", Ptr, 0)
