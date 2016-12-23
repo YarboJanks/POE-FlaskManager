@@ -23,6 +23,11 @@ CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
 
 pToken := Gdip_Startup()
+pBitmapHaystack := 0
+Scan := 0
+Stride := 0
+BitmapData := 0
+
 Flask1_timer := 0
 Flask2_timer := 0
 Flask3_timer := 0
@@ -40,16 +45,14 @@ Flask5_DURATION := 5000 * 1.32 ; Witchfire 5000 + 32% (20% quality, 12% alchemis
 
 Loop 
 {
-	IfWinActive, Path of Exile ahk_class POEWindowClass
+	IfWinActive, Path of Exile ahk_class POEWindowClass 
 	{
 		pBitmapHaystack := Gdip_BitmapFromScreen(1) ;Grabing screenshot from main monitor
 		Gdip_LockBits(pBitmapHaystack, 0, 0, 1920, 1080, Stride, Scan, BitmapData)
 
 		;MeasureAverageColor3x3(Scan, 1504, 66, Stride)
 		
-		if IsSameColors(Scan, 1441, 991, Stride, 54, 129, 37) ;checking ingame state (green shop button)
-		&& !IsSameColors(Scan, 20, 394, Stride, 48, 21, 16) ;closed chat window (Local chat button enabled and shown on screen)
-		&& !IsSameColors(Scan, 1504, 66, Stride, 165, 131, 71) { ;closed invenory (yellow pixels near "INVENTORY")
+		if IsIngame() {
 			Flask1Logic()
 			Flask2Logic()
 			Flask5Logic()
@@ -72,12 +75,29 @@ Loop
 
 ;#####################################################################################
 
+IsIngame()
+{
+	global Scan, Stride
+	if ((Scan = 0) or (Stride = 0))
+		return false
+	if IsSameColors(Scan, 1441, 991, Stride, 54, 129, 37) ;checking ingame state (green shop button)
+		&& !IsSameColors(Scan, 20, 394, Stride, 48, 21, 16) ;closed chat window (Local chat button enabled and shown on screen)
+		&& !IsSameColors(Scan, 1504, 66, Stride, 165, 131, 71) { ;closed invenory (yellow pixels near "INVENTORY")
+		return true
+	}
+	return false
+}
+
+;#####################################################################################
+
 Flask1Logic()
 {
 	global Flask1_timer, Flask1_DURATION
 	if (A_TickCount - Flask1_timer > Flask1_DURATION) and GetKeyState("RButton", "P") {
+		BlockInput On
 		Sendinput, {1 Down}
 		Sendinput, {1 Up}
+		BlockInput Off
 		Flask1_timer := A_TickCount
 	}
 }
