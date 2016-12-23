@@ -5,10 +5,11 @@
 ;██║     ███████╗██║  ██║███████║██║  ██╗    ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║    
 ;╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝    
 ; Zerker BV edition
-; 1 QS, 2 Atziri, 3 Basalt, 4 heal, 5 Witchfire
+; 1 QS, 2 Atziri, 3 Basalt, 4 heal, 5 Witchfire/Silver/Sin's Rebirth
 ; ████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
 ;#####################################################################################
+
 if not A_IsAdmin
 {
    Run *RunAs "%A_ScriptFullPath%"
@@ -28,7 +29,6 @@ Flask3_timer := 0
 Flask4_timer := 0
 Flask5_timer := 0
 FlaskHP_timer := 0
-Enter_key_timer := 0
 
 Flask1_DURATION := 4000 * 1.32 ; QS 4000 + 32% (20% quality, 12% alchemist)
 Flask2_DURATION := 3500 * 1.32 ; Atziri 3500 + 32% (20% quality, 12% alchemist)
@@ -47,21 +47,9 @@ Loop
 
 		;MeasureAverageColor3x3(Scan, 1504, 66, Stride)
 		
-		if IsSameColors(Scan, 1441, 991, Stride, 54, 129, 37) && !IsSameColors(Scan, 20, 394, Stride, 48, 21, 16) && !IsSameColors(Scan, 1504, 66, Stride, 165, 131, 71) { ;checking ingame state (green shop button) and closed chat window (Local chat button enabled and shown on screen) and closed invenory (yellow pixels near "INVENTORY")
-			if !IsSameColors(Scan, 113, 1020, Stride, 83, 12, 18) { ;checking for 30% hp
-				Sendinput, {4 Down}
-				Sendinput, {4 Up}
-				Sendinput, {1 Down}
-				Sendinput, {1 Up}
-				Sendinput, {2 Down}
-				Sendinput, {2 Up}
-				Sendinput, {3 Down}
-				Sendinput, {3 Up}
-				Sendinput, {5 Down}
-				Sendinput, {5 Up}																
-				run, cports.exe /close * * * * PathOfExile_x64.exe
-			}
-
+		if IsSameColors(Scan, 1441, 991, Stride, 54, 129, 37) ;checking ingame state (green shop button)
+		&& !IsSameColors(Scan, 20, 394, Stride, 48, 21, 16) ;closed chat window (Local chat button enabled and shown on screen)
+		&& !IsSameColors(Scan, 1504, 66, Stride, 165, 131, 71) { ;closed invenory (yellow pixels near "INVENTORY")
 			Flask1Logic()
 			Flask2Logic()
 			Flask5Logic()
@@ -108,7 +96,7 @@ Flask2Logic()
 
 ;#####################################################################################
 
-Flask3Logic() ;Basaslt
+Flask3Logic()
 {
 	global Flask3_timer, Flask3_DURATION
 	if (A_TickCount - Flask3_timer > Flask3_DURATION) and GetKeyState("RButton", "P") {
@@ -155,7 +143,7 @@ HealLogic()
 UseHealFlask4()
 {
 	global FlaskHP_timer
-	if (A_TickCount - FlaskHP_timer > 250) and IsSameColors(Scan, 471, 1052, Stride, 144, 36, 12) { ;divine 4 flask is ready
+	if (A_TickCount - FlaskHP_timer > 250) {
         Sendinput, {4 Down}
         Sendinput, {4 Up}
 		FlaskHP_timer := A_TickCount
@@ -216,12 +204,6 @@ RandSleep(x,y) {
 	Random, rand, %x%, %y%
 	Sleep %rand%
 }
-
-;#####################################################################################
-
-~Enter:: ;Chat detection
-	Enter_key_timer := A_TickCount
-return
 
 ;#####################################################################################
 
