@@ -4,17 +4,11 @@
 ;██╔══╝  ██║     ██╔══██║╚════██║██╔═██╗     ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  ██╔══██╗    
 ;██║     ███████╗██║  ██║███████║██║  ██╗    ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║    
 ;╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝    
-; Zerker BV edition
+; Zerker BV edition 3 curse
 ; 1 QS, 2 Atziri, 3 Basalt, 4 heal, 5 Witchfire/Silver/Sin's Rebirth
 ; ████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
 ;#####################################################################################
-
-if not A_IsAdmin
-{
-   Run *RunAs "%A_ScriptFullPath%"
-   ExitApp
-}
 #Include %A_ScriptDir%\libs\Gdip.ahk
 #Include %A_ScriptDir%\libs\Gdip_ImageSearch.ahk
 #SingleInstance force
@@ -35,11 +29,13 @@ Flask4_timer := 0
 Flask5_timer := 0
 FlaskHP_timer := 0
 
-Flask1_DURATION := 4000 * 1.32 ; QS 4000 + 32% (20% quality, 12% alchemist)
-Flask2_DURATION := 3500 * 1.32 ; Atziri 3500 + 32% (20% quality, 12% alchemist)
-Flask3_DURATION := 5000 * 1.32 ; Basalt 5000 + 32% (20% quality, 12% alchemist)
-;Flask4 - Heal
-Flask5_DURATION := 5000 * 1.32 ; Witchfire 5000 + 32% (20% quality, 12% alchemist)
+; 1.32 = (20% quality, 12% alchemist)
+; QS 4000 / Witchfire 5000 / Atziri 3500 / Heal / ToH 4000
+Flask1_DURATION := 4000 * (1.32 + 0.32)
+Flask2_DURATION := 5000 * 1.32
+Flask3_DURATION := 3500 * 1.32
+Flask4_DURATION := 1500 ; Heal
+Flask5_DURATION := 4000 * 1.32
 
 ;#####################################################################################
 
@@ -50,14 +46,15 @@ Loop
 		pBitmapHaystack := Gdip_BitmapFromScreen(1) ;Grabing screenshot from main monitor
 		Gdip_LockBits(pBitmapHaystack, 0, 0, 1920, 1080, Stride, Scan, BitmapData)
 
-		;MeasureAverageColor3x3(Scan, 1504, 66, Stride)
+		;MeasureAverageColor3x3(Scan, 98, 970, Stride)
 		
 		if IsIngame() {
 			Flask1Logic()
 			Flask2Logic()
+			Flask3Logic()
 			Flask5Logic()
 
-			if !IsSameColors(Scan, 89, 948, Stride, 173, 24, 35) { ;checking for 60% hp
+			if !IsSameColors(Scan, 98, 970, Stride, 162, 26, 37) { ;checking for 50% hp
 				HealLogic()
 			}
 		}
@@ -128,18 +125,6 @@ Flask3Logic()
 
 ;#####################################################################################
 
-UseBasalt()
-{
-	global Flask3_timer, Flask3_DURATION
-	if (A_TickCount - Flask3_timer > Flask3_DURATION) {
-		Sendinput, {3 Down}
-		Sendinput, {3 Up}
-		Flask3_timer := A_TickCount
-	}
-}
-
-;#####################################################################################
-
 Flask5Logic()
 {
 	global Flask5_timer, Flask5_DURATION
@@ -154,7 +139,6 @@ Flask5Logic()
 
 HealLogic()
 {
-	UseBasalt()
 	UseHealFlask4()
 }
 
@@ -162,8 +146,8 @@ HealLogic()
 
 UseHealFlask4()
 {
-	global FlaskHP_timer
-	if (A_TickCount - FlaskHP_timer > 250) {
+	global FlaskHP_timer, Flask4_DURATION
+	if (A_TickCount - FlaskHP_timer > Flask4_DURATION) {
         Sendinput, {4 Down}
         Sendinput, {4 Up}
 		FlaskHP_timer := A_TickCount
