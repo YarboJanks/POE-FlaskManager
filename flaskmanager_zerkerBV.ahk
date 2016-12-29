@@ -9,6 +9,11 @@
 ; ████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
 ;#####################################################################################
+if not A_IsAdmin
+{
+   Run *RunAs "%A_ScriptFullPath%"
+   ExitApp
+}
 #Include %A_ScriptDir%\libs\Gdip.ahk
 #Include %A_ScriptDir%\libs\Gdip_ImageSearch.ahk
 #SingleInstance force
@@ -252,6 +257,11 @@ F5::
 F12::
 	Gdip_Shutdown(pToken) ;Closing handles
 	ExitApp
+return
+
+;====== Logout key ======
+XButton1::
+	run, cports.exe /close * * * * PathOfExile_x64.exe
 return
 
 ;#####################################################################################
