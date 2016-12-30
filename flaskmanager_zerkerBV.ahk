@@ -22,10 +22,6 @@ CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
 
 pToken := Gdip_Startup()
-pBitmapHaystack := 0
-Scan := 0
-Stride := 0
-BitmapData := 0
 INGAME := false
 
 Flask1_timer := 0
@@ -34,11 +30,12 @@ Flask3_timer := 0
 Flask4_timer := 0
 Flask5_timer := 0
 FlaskHP_timer := 0
+Spacebar_timer := 0
 
 ; 1.32 = (20% quality, 12% alchemist)
 ; QS 4000 / Heal or Silver / ToH 4000 / Atziri 3500 / Witchfire 5000
 Flask1_DURATION := 4000 * (1.32 + 0.32)
-Flask2_DURATION := 1500 ; Heal
+Flask2_DURATION := 5000 ; Heal
 Flask3_DURATION := 4000 * 1.32
 Flask4_DURATION := 3500 * 1.32
 Flask5_DURATION := 5000 * 1.32
@@ -47,16 +44,22 @@ Flask5_DURATION := 5000 * 1.32
 
 Loop 
 {
+	INGAME := false
 	IfWinActive, Path of Exile ahk_class POEWindowClass 
 	{
 		pBitmapHaystack := Gdip_BitmapFromScreen(1) ;Grabing screenshot from main monitor
 		Gdip_LockBits(pBitmapHaystack, 0, 0, 1920, 1080, Stride, Scan, BitmapData)
 
-		;MeasureAverageColor3x3(Scan, 98, 970, Stride)
-		
-		INGAME := false
-		if IsIngame() {
+		if IsSameColors(Scan, 1441, 991, Stride, 54, 129, 37) ;checking ingame state (green shop button)
+			&& !IsSameColors(Scan, 20, 394, Stride, 48, 21, 16) ;closed chat window (Local chat button enabled and shown on screen)
+			&& !IsSameColors(Scan, 1504, 66, Stride, 165, 131, 71) { ;closed invenory (yellow pixels near "INVENTORY")
 			INGAME := true
+
+			if (A_TickCount - Spacebar_timer < 16000) { ; Activating flask on spacebar
+				UseFlask1()
+				UseFlask2()
+			}
+
 			Flask1Logic()
 			Flask3Logic()
 			Flask4Logic()
@@ -70,6 +73,8 @@ Loop
 			Sleep 500
 		}
 
+		;MeasureAverageColor3x3(Scan, 98, 970, Stride)
+
 		Gdip_UnlockBits(pBitmapHaystack, BitmapData)
 		Gdip_DisposeImage(pBitmapHaystack)
 		Sleep 20 ;Small sleep timer in main cycle
@@ -80,29 +85,12 @@ Loop
 
 ;#####################################################################################
 
-IsIngame()
-{
-	global Scan, Stride
-	if ((Scan = 0) or (Stride = 0))
-		return false
-	if IsSameColors(Scan, 1441, 991, Stride, 54, 129, 37) ;checking ingame state (green shop button)
-		&& !IsSameColors(Scan, 20, 394, Stride, 48, 21, 16) ;closed chat window (Local chat button enabled and shown on screen)
-		&& !IsSameColors(Scan, 1504, 66, Stride, 165, 131, 71) { ;closed invenory (yellow pixels near "INVENTORY")
-		return true
-	}
-	return false
-}
-
-;#####################################################################################
-
 UseFlask1()
 {
 	global Flask1_timer, Flask1_DURATION
 	if (A_TickCount - Flask1_timer > Flask1_DURATION) {
-		BlockInput On
 		Sendinput, {1 Down}
 		Sendinput, {1 Up}
-		BlockInput Off
 		Flask1_timer := A_TickCount
 	}
 }
@@ -111,10 +99,8 @@ Flask1Logic()
 {
 	global Flask1_timer, Flask1_DURATION
 	if (A_TickCount - Flask1_timer > Flask1_DURATION) and GetKeyState("RButton", "P") {
-		BlockInput On
 		Sendinput, {1 Down}
 		Sendinput, {1 Up}
-		BlockInput Off
 		Flask1_timer := A_TickCount
 	}
 }
@@ -254,10 +240,8 @@ RandSleep(x,y) {
 ;#####################################################################################
 
 ~Space::
-	global INGAME
 	if INGAME {
-		UseFlask1()
-		UseFlask2()
+		Spacebar_timer := A_TickCount
 	}
 return
 
