@@ -240,9 +240,7 @@ RandSleep(x,y) {
 ;#####################################################################################
 
 ~Space::
-	if INGAME {
-		Spacebar_timer := A_TickCount
-	}
+	Spacebar_timer := A_TickCount
 return
 
 ~1::
