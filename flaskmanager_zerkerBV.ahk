@@ -26,6 +26,7 @@ pBitmapHaystack := 0
 Scan := 0
 Stride := 0
 BitmapData := 0
+INGAME := false
 
 Flask1_timer := 0
 Flask2_timer := 0
@@ -35,12 +36,12 @@ Flask5_timer := 0
 FlaskHP_timer := 0
 
 ; 1.32 = (20% quality, 12% alchemist)
-; QS 4000 / Witchfire 5000 / Atziri 3500 / Heal / ToH 4000
+; QS 4000 / Heal or Silver / ToH 4000 / Atziri 3500 / Witchfire 5000
 Flask1_DURATION := 4000 * (1.32 + 0.32)
-Flask2_DURATION := 5000 * 1.32
-Flask3_DURATION := 3500 * 1.32
-Flask4_DURATION := 1500 ; Heal
-Flask5_DURATION := 4000 * 1.32
+Flask2_DURATION := 1500 ; Heal
+Flask3_DURATION := 4000 * 1.32
+Flask4_DURATION := 3500 * 1.32
+Flask5_DURATION := 5000 * 1.32
 
 ;#####################################################################################
 
@@ -53,10 +54,12 @@ Loop
 
 		;MeasureAverageColor3x3(Scan, 98, 970, Stride)
 		
+		INGAME := false
 		if IsIngame() {
+			INGAME := true
 			Flask1Logic()
-			Flask2Logic()
 			Flask3Logic()
+			Flask4Logic()
 			Flask5Logic()
 
 			if !IsSameColors(Scan, 98, 970, Stride, 162, 26, 37) { ;checking for 50% hp
@@ -92,6 +95,18 @@ IsIngame()
 
 ;#####################################################################################
 
+UseFlask1()
+{
+	global Flask1_timer, Flask1_DURATION
+	if (A_TickCount - Flask1_timer > Flask1_DURATION) {
+		BlockInput On
+		Sendinput, {1 Down}
+		Sendinput, {1 Up}
+		BlockInput Off
+		Flask1_timer := A_TickCount
+	}
+}
+
 Flask1Logic()
 {
 	global Flask1_timer, Flask1_DURATION
@@ -105,6 +120,16 @@ Flask1Logic()
 }
 
 ;#####################################################################################
+
+UseFlask2()
+{
+	global Flask2_timer, Flask2_DURATION
+	if (A_TickCount - Flask2_timer > Flask2_DURATION) {
+		Sendinput, {2 Down}
+		Sendinput, {2 Up}
+		Flask2_timer := A_TickCount
+	}
+}
 
 Flask2Logic()
 {
@@ -130,6 +155,18 @@ Flask3Logic()
 
 ;#####################################################################################
 
+Flask4Logic()
+{
+	global Flask4_timer, Flask4_DURATION
+	if (A_TickCount - Flask4_timer > Flask4_DURATION) and GetKeyState("RButton", "P") {
+        Sendinput, {4 Down}
+        Sendinput, {4 Up}
+	    Flask4_timer := A_TickCount
+	}	
+}
+
+;#####################################################################################
+
 Flask5Logic()
 {
 	global Flask5_timer, Flask5_DURATION
@@ -144,17 +181,17 @@ Flask5Logic()
 
 HealLogic()
 {
-	UseHealFlask4()
+	UseHealFlask2()
 }
 
 ;#####################################################################################
 
-UseHealFlask4()
+UseHealFlask2()
 {
-	global FlaskHP_timer, Flask4_DURATION
-	if (A_TickCount - FlaskHP_timer > Flask4_DURATION) {
-        Sendinput, {4 Down}
-        Sendinput, {4 Up}
+	global FlaskHP_timer, Flask2_DURATION
+	if (A_TickCount - FlaskHP_timer > Flask2_DURATION) {
+        Sendinput, {2 Down}
+        Sendinput, {2 Up}
 		FlaskHP_timer := A_TickCount
 		return true
 	}
@@ -215,6 +252,14 @@ RandSleep(x,y) {
 }
 
 ;#####################################################################################
+
+~Space::
+	global INGAME
+	if INGAME {
+		UseFlask1()
+		UseFlask2()
+	}
+return
 
 ~1::
 	Flask1_timer := A_TickCount
