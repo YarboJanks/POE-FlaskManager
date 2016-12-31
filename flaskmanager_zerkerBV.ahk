@@ -85,17 +85,17 @@ Loop
 
 ;#####################################################################################
 
-UseFlask1()
+UseFlask1() ; Use QS when press left mouse button
 {
 	global Flask1_timer, Flask1_DURATION
-	if (A_TickCount - Flask1_timer > Flask1_DURATION) {
+	if (A_TickCount - Flask1_timer > Flask1_DURATION) and GetKeyState("LButton", "P") {
 		Sendinput, {1 Down}
 		Sendinput, {1 Up}
 		Flask1_timer := A_TickCount
 	}
 }
 
-Flask1Logic()
+Flask1Logic() 
 {
 	global Flask1_timer, Flask1_DURATION
 	if (A_TickCount - Flask1_timer > Flask1_DURATION) and GetKeyState("RButton", "P") {
@@ -107,10 +107,10 @@ Flask1Logic()
 
 ;#####################################################################################
 
-UseFlask2()
+UseFlask2() ; Use Silver when press left mouse button
 {
 	global Flask2_timer, Flask2_DURATION
-	if (A_TickCount - Flask2_timer > Flask2_DURATION) {
+	if (A_TickCount - Flask2_timer > Flask2_DURATION) and GetKeyState("LButton", "P") {
 		Sendinput, {2 Down}
 		Sendinput, {2 Up}
 		Flask2_timer := A_TickCount
