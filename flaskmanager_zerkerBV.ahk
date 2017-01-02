@@ -5,7 +5,7 @@
 ;██║     ███████╗██║  ██║███████║██║  ██╗    ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║    
 ;╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝    
 ; Zerker BV edition 3 curse
-; 1 QS, 2 Atziri, 3 Basalt, 4 heal, 5 Witchfire/Silver/Sin's Rebirth
+; QS 4000 / Heal or Silver or Jade / ToH 4000 / Atziri 3500 / Witchfire 5000
 ; ████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
 ;#####################################################################################
@@ -33,9 +33,9 @@ FlaskHP_timer := 0
 Spacebar_timer := 0
 
 ; 1.32 = (20% quality, 12% alchemist)
-; QS 4000 / Heal or Silver / ToH 4000 / Atziri 3500 / Witchfire 5000
+; QS 4000 / Heal or Silver or Jade / ToH 4000 / Atziri 3500 / Witchfire 5000
 Flask1_DURATION := 4000 * (1.32 + 0.32)
-Flask2_DURATION := 5000 ; Heal
+Flask2_DURATION := 4000 * 1.32 ;
 Flask3_DURATION := 4000 * 1.32
 Flask4_DURATION := 3500 * 1.32
 Flask5_DURATION := 5000 * 1.32
