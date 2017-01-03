@@ -57,10 +57,10 @@ Loop
 
 			if (A_TickCount - Spacebar_timer < 16000) { ; Activating flask on spacebar
 				UseFlask1()
-				UseFlask2()
 			}
 
 			Flask1Logic()
+			Flask2Logic()
 			Flask3Logic()
 			Flask4Logic()
 			Flask5Logic()
