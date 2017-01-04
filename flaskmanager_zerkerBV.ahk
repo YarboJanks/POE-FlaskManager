@@ -34,11 +34,11 @@ Spacebar_timer := 0
 
 ; 1.32 = (20% quality, 12% alchemist)
 ; QS 4000 / Heal or Silver or Jade / ToH 4000 / Atziri 3500 / Witchfire 5000
-Flask1_DURATION := 4000 * (1.32 + 0.32)
-Flask2_DURATION := 4000 * 1.32 ;
-Flask3_DURATION := 4000 * 1.32
-Flask4_DURATION := 3500 * 1.32
-Flask5_DURATION := 5000 * 1.32
+Flask1_DURATION := 4000 * (1.32 + 0.30) - 100
+Flask2_DURATION := 4000 * 1.32 - 100
+Flask3_DURATION := 4000 * 1.32 - 100
+Flask4_DURATION := 3500 * 1.32 - 100
+Flask5_DURATION := 5000 * 1.32 - 100
 
 ;#####################################################################################
 
@@ -64,10 +64,6 @@ Loop
 			Flask3Logic()
 			Flask4Logic()
 			Flask5Logic()
-
-			if !IsSameColors(Scan, 98, 970, Stride, 162, 26, 37) { ;checking for 50% hp
-				HealLogic()
-			}
 		}
 		else {
 			Sleep 500
@@ -77,7 +73,7 @@ Loop
 
 		Gdip_UnlockBits(pBitmapHaystack, BitmapData)
 		Gdip_DisposeImage(pBitmapHaystack)
-		Sleep 20 ;Small sleep timer in main cycle
+		Sleep 100 ;Small sleep timer in main cycle
 	}
 	else
 		Sleep 3000 ;Waiting for game to activate
@@ -161,27 +157,6 @@ Flask5Logic()
         Sendinput, {5 Up}
 	    Flask5_timer := A_TickCount
 	}	
-}
-
-;#####################################################################################
-
-HealLogic()
-{
-	UseHealFlask2()
-}
-
-;#####################################################################################
-
-UseHealFlask2()
-{
-	global FlaskHP_timer, Flask2_DURATION
-	if (A_TickCount - FlaskHP_timer > Flask2_DURATION) {
-        Sendinput, {2 Down}
-        Sendinput, {2 Up}
-		FlaskHP_timer := A_TickCount
-		return true
-	}
-	return false
 }
 
 ;#####################################################################################
