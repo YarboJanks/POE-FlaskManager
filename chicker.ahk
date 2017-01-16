@@ -54,7 +54,7 @@ global IngameState := frameBase
 ;================= start high resolution timer =================
 global PlayerStats := Object()
 SetHRtimer(1, "chickenTimer")	; START, 1ms timer resolution
-Sleep 100000
+Sleep 365*24*60*3600
 SetHRtimer(0)			; STOP HR timer
 ;================================================================================
 
@@ -120,5 +120,6 @@ return
 
 ;====== CLOSE SCRIPT ======
 F12::
+	SetHRtimer(0)
 	ExitApp
 return
