@@ -62,11 +62,11 @@ SetHRtimer(0)			; STOP HR timer
 chickenTimer(uTimerID, uMsg, dwUserP, dw1P, dw2P) {
 	readPlayerStats(PlayerStats)
 	if (PlayerStats.isInGame){
-		if (PlayerStats.maxES > 1000) {
+		if (PlayerStats.maxES > 1000 and PlayerStats.maxHP = 1) { ;CI
 			if (PlayerStats.es < 0.3) {
 				run, cports.exe /close * * * * PathOfExile_x64.exe
 			}
-		} else if (PlayerStats.maxHP > 500) {
+		} else if (PlayerStats.maxHP > 500) { ; HP
 			if (PlayerStats.hp < 0.3) {
 				run, cports.exe /close * * * * PathOfExile_x64.exe
 			}		
