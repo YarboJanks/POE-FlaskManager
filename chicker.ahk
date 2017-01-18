@@ -65,10 +65,14 @@ chickenTimer(uTimerID, uMsg, dwUserP, dw1P, dw2P) {
 		if (PlayerStats.maxES > 1000 and PlayerStats.maxHP = 1) { ;CI
 			if (PlayerStats.es < 0.3) {
 				run, cports.exe /close * * * * PathOfExile_x64.exe
+				run, taskkill /f /im PathOfExile_x64.exe
+				ExitApp
 			}
 		} else if (PlayerStats.maxHP > 500) { ; HP
 			if (PlayerStats.hp < 0.3) {
 				run, cports.exe /close * * * * PathOfExile_x64.exe
+				run, taskkill /f /im PathOfExile_x64.exe
+				ExitApp
 			}		
 		}
 	}
