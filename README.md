@@ -4,7 +4,6 @@ Chicker is chicken script based on memory reading. Pretty fast (1-2 ms reaction)
 
 Example bat file (run as admin):
 ```
-taskkill /f /im chiker.exe
 start "" /D C:\games\poe\ C:\games\poe\PathOfExile_x64.exe
 TIMEOUT /T 10
 start "" C:\games\poe\_tools\POE-FlaskManager\chicker.exe
